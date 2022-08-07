@@ -1,0 +1,11 @@
+name: MLOps
+channels:
+  - conda-forge
+  - Anaconda
+dependencies:
+  - python=3.8
+  - pip
+  - pip:
+      - scikit-learn==0.23.2
+      - mlflow==1.27.0
+      - pandas==1.4.3
