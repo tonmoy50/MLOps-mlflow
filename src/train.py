@@ -17,10 +17,12 @@ import mlflow
 import mlflow.sklearn
 
 import logging
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
-
 
 def eval_metrics(actual, pred):
     rmse = np.sqrt(mean_squared_error(actual, pred))
@@ -56,9 +58,11 @@ if __name__ == "__main__":
     alpha = float(sys.argv[1]) if len(sys.argv) > 1 else 0.5
     l1_ratio = float(sys.argv[2]) if len(sys.argv) > 2 else 0.5
 
-    experiment_name = "Wine Prediction"
-    exp_id = mlflow.get_experiment(name= experiment_name)
-    mlflow.set_experiment(experiment_name=experiment_name)
+    # experiment_name = "Wine Prediction"
+    # exp_id = mlflow.get_experiment(name= experiment_name)
+    # mlflow.set_experiment(experiment_name=experiment_name)
+
+    mlflow.set_experiment(experiment_id="1")
 
     with mlflow.start_run():
         lr = ElasticNet(alpha=alpha, l1_ratio=l1_ratio, random_state=42)
@@ -80,6 +84,7 @@ if __name__ == "__main__":
         mlflow.log_metric("mae", mae)
 
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+        print(tracking_url_type_store, mlflow.get_artifact_uri())
 
         # Model registry does not work with file store
         if tracking_url_type_store != "file":
@@ -88,8 +93,8 @@ if __name__ == "__main__":
             # There are other ways to use the Model Registry, which depends on the use case,
             # please refer to the doc for more information:
             # https://mlflow.org/docs/latest/model-registry.html#api-workflow
-            mlflow.sklearn.log_model(lr, "shakalakaBoomBoom", registered_model_name="ElasticnetWineModel")
+            mlflow.sklearn.log_model(lr, "model", registered_model_name="ElasticnetWineModel")
         else:
-            mlflow.sklearn.log_model(lr, "shakalakaBoomBoom")
+            mlflow.sklearn.log_model(lr, "modelGud")
         
         mlflow.end_run()
