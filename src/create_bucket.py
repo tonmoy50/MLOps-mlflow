@@ -7,20 +7,20 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-minioClient = Minio(os.environ['MLFLOW_S3_ENDPOINT_URL'], # .split('//')[1]
+minioClient = Minio(os.environ['MLFLOW_S3_ENDPOINT_URL'].split('//')[1],
                   access_key=os.environ['AWS_ACCESS_KEY_ID'],
                   secret_key=os.environ['AWS_SECRET_ACCESS_KEY'],
                   secure=False)
 
-# minioClient = Minio(os.environ['MLFLOW_S3_ENDPOINT_URL'].split('//')[1],
-#                   access_key="minio",
-#                   secret_key="minio1234",
+# minioClient = Minio(os.environ['MLFLOW_S3_ENDPOINT_URL'], #.split('//')[1],
+#                   access_key="minioadmin",
+#                   secret_key="minioadmin",
 #                   secure=False)
 
 minioClient.list_buckets()
-
+bucket_name = "mlflow-test2"
 try:
-    minioClient.make_bucket('mlflow-test')
+    minioClient.make_bucket(bucket_name)
     print("Bucket Created")
 except Exception as err:
     print(err)
@@ -36,36 +36,36 @@ policy = {"Version":"2012-10-17",
             "Effect":"Allow",
             "Principal":{"AWS":"*"},
             "Action":"s3:GetBucketLocation",
-            "Resource":"arn:aws:s3:::mlflow-test"
+            "Resource":f"""arn:aws:s3:::{bucket_name}"""
             },
             {
             "Sid":"",
             "Effect":"Allow",
             "Principal":{"AWS":"*"},
             "Action":"s3:ListBucket",
-            "Resource":"arn:aws:s3:::mlflow-test"
+            "Resource":f"""arn:aws:s3:::{bucket_name}"""
             },
             {
             "Sid":"",
             "Effect":"Allow",
             "Principal":{"AWS":"*"},
             "Action":"s3:GetObject",
-            "Resource":"arn:aws:s3:::mlflow-test/*"
+            "Resource":f"""arn:aws:s3:::{bucket_name}/*"""
             },
             {
             "Sid":"",
             "Effect":"Allow",
             "Principal":{"AWS":"*"},
             "Action":"s3:PutObject",
-            "Resource":"arn:aws:s3:::mlflow-test/*"
+            "Resource":f"""arn:aws:s3:::{bucket_name}/*"""
             }
 
         ]}
 
-minioClient.set_bucket_policy('mlflow-test', json.dumps(policy))
+minioClient.set_bucket_policy(bucket_name, json.dumps(policy))
 
 # List all object paths in bucket that begin with my-prefixname.
-objects = minioClient.list_objects('mlflow-test', prefix='my',
+objects = minioClient.list_objects(bucket_name, prefix='my',
                               recursive=True)
 for obj in objects:
     print(obj.bucket_name, obj.object_name.encode('utf-8'), obj.last_modified,
