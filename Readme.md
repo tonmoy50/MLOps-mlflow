@@ -60,6 +60,8 @@ docker run \
   quay.io/minio/minio server /data --console-address ":9001"
 ```
 
+default artifact - `s3://mlflow/artifacts`
+
 Install dependencies, 
 ```
 pip3 install minio
