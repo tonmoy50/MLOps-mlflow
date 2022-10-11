@@ -77,3 +77,9 @@ export AWS_SECRET_ACCESS_KEY=<your_secret_key>
 
 ### Create Bucket 
 `python create_bucket.py`
+
+
+## Redis in Docker
+
+Run the following command to setup redis in docker, 
+`docker run -d -p 6379:6379 redis`
